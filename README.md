@@ -1,5 +1,6 @@
 # 2bitprogrammers/api_mockup
 A simple tool to quickly mockup backend APIs.  
+
 It is meant to be used for instructional and debugging purposes only.
 
 ## Configuration File
@@ -8,33 +9,263 @@ This is where you define each of the endpoints.
 The configuration file is only read once, during application start.
 If you modify your endpoint configuration(s) then you must restart your app to ensure the changes take effect.
 
-Default Filename:  config_api_mockup.json
+Default Filename:  **config_api_mockup.json**
+
+Things to note about the configuration file:
+* The config file can have multiple unique endpoints in which the app can parse through
+* Each endpoint can have multiple unique methods in which the app can parse through
+* Each response can have multiple headers which the app dynamically appends to the response
+* Each response can only have one payload
+* This application doesn't currently support binary data for the response payload
 
 The basic structure of the config file is:
-* **URI - map[string]** - the endpoint route which the app listens for in order to server a response
-  * **Method - map[string]** - each route will map to various methods (i.e. GET, POST, UPDATE, etc.)
+* **URI - map[string]** - one or more endpoint routes the app listens for in order to server a response
+  * **Method - map[string]** - each route will map to one or more methods (i.e. GET, POST, UPDATE, etc.)
     * **Endpoint Response** - each route method will have its own response definition.  This contains the following:
-      * **header list** - an array of key/value pairs which will be added before you send the response
-      * **payload** - the text-based body which is sent in the response  
-
+      * **header list** - an array of key/value pairs which will be added to the header list before you send the response
+      * **payload** - a text-based body which is sent in the response  
 
 ### Default Response - Not Found (404)
-If the app cannot find a valid definition for the specifiec URI/Method combo, then it returns the default response:
+If the app cannot find a valid definition for the specified URI/Method combination, then it returns the default response:
 * Headers:
   * Content-Type = application/json
 * Payload:  ```{ "errors": [{ "status": 404, "message": "Resource Not Found", "uri": "<requestURI>", "method": "<requestMethod>" }] }```
 
+A sample error would be:
+```bash
+$ curl -v http://localhost:1234/uri/does/not/exist
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 1234 (#0)
+> GET /uri/does/not/exist HTTP/1.1
+> Host: localhost:1234
+> User-Agent: curl/7.55.1
+> Accept: */*
+>
+< HTTP/1.1 404 Not Found
+< Content-Type: application/json
+< Date: Fri, 11 Dec 2020 21:56:34 GMT
+< Content-Length: 113
+<
+{ "errors": [{ "status": 404, "message": "Resource Not Found", "uri": "/uri/does/not/exist", "method": "GET" }] }
+* Connection #0 to host localhost left intact
+```
 
 ### Default Endpoint Headers (Content-Type: text/plain)
-If the user defines an endpoint response, but it has no declared headers, then it will use the following:
-* Content-Type: plain/text
+If the user defines an endpoint response, but it has no declared headers, then it will use the following definition:
+* "Content-Type" = "plain/text"
 
-### Endpoint Examples
-This will retu
+### Configuration Examples
+Here we will show some simple examples. It is not an exhaustive list, but it should enough to get you going.
+
+#### Config Example: Ping/Pong (GET)
+Our 1st example will just return a simple string:
+* URI: "/ping"
+* Method: "GET"
+* Headers:
+  * "Content-Type" = "text/plain"
+* Payload: "pong"
+
+For this example, the config file would look like:
+```json
+{
+    "/ping": { 
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "text/plain" }
+            ],
+            "payload": "pong"
+        }
+    }
+}
+```
+
+Run the server and then test the endpoint:
+```bash
+$ curl -X POST http://localhost:1234/users
+{ "code": 200, "message": "OK - User added successfully.", "data": { "id": 1111 }, "error": null  }
+C:\Users\rbala>curl -v http://localhost:1234/ping
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 1234 (#0)
+> GET /ping HTTP/1.1
+> Host: localhost:1234
+> User-Agent: curl/7.55.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: text/plain
+< Date: Fri, 11 Dec 2020 21:39:28 GMT
+< Content-Length: 4
+<
+pong
+* Connection #0 to host localhost left intact
+```
+
+#### Config Example: App Status (GET)
+In this example we will return a JSON string:
+* URI: "/app/status"
+* Method: "GET"
+* Headers:
+  * "Content-Type" = "application/json"
+* Payload: ```{ "appStatus": "healthy" }```
+
+For this example, the config file would look like:
+```json
+{
+    "/app/status": {
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "application/json" }
+            ],
+            "payload": "{ \"appStatus\": \"healthy\" }"
+        }
+    }
+}
+```
+
+Run the server and then test the endpoint:
+```bash
+$ curl -v http://localhost:1234/app/status
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 1234 (#0)
+> GET /app/status HTTP/1.1
+> Host: localhost:1234
+> User-Agent: curl/7.55.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Date: Fri, 11 Dec 2020 21:40:21 GMT
+< Content-Length: 26
+<
+{ "appStatus": "healthy" }
+* Connection #0 to host localhost left intact
+```
+
+#### Config Example: Home Page (GET)
+In this example we will return a static web page (index.html):
+* URI: "/index.html"
+* Method: "GET"
+* Headers:
+  * "Content-Type" = "text/html;charset=utf-8"
+* Payload: ```<!doctype html>\n<html><head><meta charset=\"utf-8\"><title>2-Bit Mockup Index Page</title></head><body><b>/index.html</b> - This is a mockup HTML page :)</body></html>```
+
+For this example, the config file would look like:
+```json
+{
+    "/index.html": {
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "text/html;charset=utf-8" }
+            ],
+            "payload": "<!doctype html>\n<html><head><meta charset=\"utf-8\"><title>2-Bit Mockup Index Page</title></head><body><b>/index.html</b> - This is a mockup HTML page :)</body></html>"
+        }
+    }
+}
+```
+
+Run the server and then test the endpoint:
+```bash
+$ curl -v http://localhost:1234/index.html
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 1234 (#0)
+> GET /index.html HTTP/1.1
+> Host: localhost:1234
+> User-Agent: curl/7.55.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: text/html;charset=utf-8
+< Date: Fri, 11 Dec 2020 21:49:08 GMT
+< Content-Length: 165
+<
+<!doctype html>
+<html><head><meta charset="utf-8"><title>2-Bit Mockup Index Page</title></head><body><b>/index.html</b> - This is a mockup HTML page :)</body></html>
+* Connection #0 to host localhost left intact
+```
+
+#### Config Example: Users (GET and POST)
+In this example we will define two things:
+1. Retrieve a single user (mock data)
+   * URI: "/users"
+   * Method: "GET"
+   * Headers:
+     * "Content-Type" = "application/json"
+   * Payload: ```{ "code": 200, "message": "OK", "data": { "id": 1001, "first_name": "bubba", "last_name": "joe", "email": "bubba@joe.com" }, "error": null }```
+1. Return a JSON string which will simulate the response after a new user is added.  The response will include the new userID.
+   * URI: "/users"
+   * Method: "POST"
+   * Headers:
+     * "Content-Type" = "application/json"
+   * Payload: ```{ "code": 200, "message": "OK - User added successfully.", "data": { "id": 1111 }, "error": null  }```
 
 
-## Running as Standalone GoLang App
-To run directly from the source code
+For this example, the config file would look like:
+```json
+{
+    "/users": {
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "application/json" }
+            ],
+            "payload": "{ \"code\": 200, \"message\": \"OK\", \"data\": { \"id\": 1001, \"first_name\": \"bubba\", \"last_name\": \"joe\", \"email\": \"bubba@joe.com\" }, \"error\": null }"
+        },
+
+        "POST": {
+            "headers": [
+                { "key": "Content-Type", "value": "application/json" }
+            ],
+            "payload": "{ \"code\": 200, \"message\": \"OK - User added successfully.\", \"data\": { \"id\": 1111 }, \"error\": null  }"
+        }
+    }
+}
+```
+
+Run the server and then test the endpoints:
+```bash
+## Simulate getting a single user record
+$ curl -v http://localhost:1234/users
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 1234 (#0)
+> GET /users HTTP/1.1
+> Host: localhost:1234
+> User-Agent: curl/7.55.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Date: Fri, 11 Dec 2020 21:45:45 GMT
+< Content-Length: 140
+<
+{ "code": 200, "message": "OK", "data": { "id": 1001, "first_name": "bubba", "last_name": "joe", "email": "bubba@joe.com" }, "error": null }
+* Connection #0 to host localhost left intact
+
+
+## Simulate adding a new user
+$ curl -v -X POST http://localhost:1234/users
+*   Trying ::1...
+* TCP_NODELAY set
+* Connected to localhost (::1) port 1234 (#0)
+> POST /users HTTP/1.1
+> Host: localhost:1234
+> User-Agent: curl/7.55.1
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Date: Fri, 11 Dec 2020 21:43:26 GMT
+< Content-Length: 99
+<
+{ "code": 200, "message": "OK - User added successfully.", "data": { "id": 1111 }, "error": null  }
+* Connection #0 to host localhost left intact
+```
+
+## Running the App as Standalone GoLang App
+To run directly from the source code:
 ```bash
 $ cd src/
 $ go run main.go 
@@ -56,19 +287,27 @@ CTRL+C
 
 ## Running Multiple Mock APIs on Different Ports 
 The original app wasn't designed to handle this use case. 
+
 With that in mind, there are a couple different ways to achieve this.
 
-1. Modify the "appPort" variable in main.go and then run a 2nd instance of the application
-   * const appPort = "1234"
-     * change "1234" to the port you wish the app to listen on
-1. Run multiple docker containers and bind the container ports to your localhost (on different ports). 
-   * See Below (in docker section):  Example: Running Multiple Containers (listening on different ports)
+1. Modify the "appPort" variable in main.go before you run the app.  For many reasons, this isn't an ideal work around.  But if you wish to do it anyways, look for the constant "appPort" in main.go.
+   * change the default bind port ("1234") to the port you wish the app to listen on localhost
+1. A better approach would be to run multiple docker containers and bind the container ports to your localhost (on different ports). 
+   * *See Below (in docker section):*  **Example: Running Multiple Containers (listening on different ports)**
 
 
 ## Run within Docker 
 This will run the components on your local system without using minikube or kubernetes.
 
+
 ### Building the Docker Image
+If you wish to pull the latest docker image from DockerHub:
+```bash
+$ docker pull 2bitprogrammers/api_mockup:latest
+```
+
+### Building the Docker Image
+For most, you don't need to build the container.  The instructions are here for "documentation completeness" only.
 ```bash
 docker build . -t 2bitprogrammers/api_mockup
 Sending build context to Docker daemon  122.4kB
