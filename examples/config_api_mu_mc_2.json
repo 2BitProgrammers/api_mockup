@@ -1,0 +1,10 @@
+{
+    "/app": { 
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "text/plain" }
+            ],
+            "payload": "app_2 makes all others drool :)"
+        }
+    }
+}

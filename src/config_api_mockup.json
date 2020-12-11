@@ -1,0 +1,45 @@
+{
+    "/ping": { 
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "text/plain" }
+            ],
+            "payload": "pong"
+        }
+    },
+
+    "/app/status": {
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "application/json" }
+            ],
+            "payload": "{ \"appStatus\": \"healthy\" }"
+        }
+    },
+
+    "/index.html": {
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "text/html;charset=utf-8" }
+            ],
+            "payload": "<!doctype html>\n<html><head><meta charset=\"utf-8\"><title>2-Bit Mockup Index Page</title></head><body><b>/index.html</b> - This is a mockup HTML page :)</body></html>"
+        }
+    },
+
+    "/users": {
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "application/json" }
+            ],
+            "payload": "{ \"code\": 200, \"message\": \"OK\", \"data\": { \"id\": 1001, \"first_name\": \"bubba\", \"last_name\": \"joe\", \"email\": \"bubba@joe.com\" }, \"error\": null }"
+        },
+
+        "POST": {
+            "headers": [
+                { "key": "Content-Type", "value": "application/json" }
+            ],
+            "payload": "{ \"code\": 200, \"message\": \"OK - User added successfully.\", \"data\": { \"id\": 1111 }, \"error\": null  }"
+        }
+    }
+
+}
