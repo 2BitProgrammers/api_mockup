@@ -303,13 +303,19 @@ This will run the components on your local system without using minikube or kube
 ### Building the Docker Image
 If you wish to pull the latest docker image from DockerHub:
 ```bash
-$ docker pull 2bitprogrammers/api_mockup:latest
+$ docker pull 2bitprogrammers/api_mockup
+
+Using default tag: latest
+latest: Pulling from 2bitprogrammers/api_mockup
+Digest: sha256:d201cb21fc46b719562d9f4e7435239ca7c138672d524ca30a6ea1a2f95cfb9d
+Status: Image is up to date for 2bitprogrammers/api_mockup:latest
+docker.io/2bitprogrammers/api_mockup:latest
 ```
 
 ### Building the Docker Image
 For most, you don't need to build the container.  The instructions are here for "documentation completeness" only.
 ```bash
-docker build . -t 2bitprogrammers/api_mockup
+$ docker build . -t 2bitprogrammers/api_mockup
 Sending build context to Docker daemon  122.4kB
 Step 1/12 : FROM golang:alpine AS builder
  ---> b3bc898ad092
