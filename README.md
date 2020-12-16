@@ -4,7 +4,7 @@ A simple tool to quickly mockup backend APIs.
 It is meant to be used for instructional and debugging purposes only.
 
 ## Configuration File
-This is where you define each of the endpoints. 
+This is where you define each of the endpoints.
 
 The configuration file is only read once, during application start.
 If you modify your endpoint configuration(s) then you must restart your app to ensure the changes take effect.
@@ -69,7 +69,7 @@ Our 1st example will just return a simple string:
 For this example, the config file would look like:
 ```json
 {
-    "/ping": { 
+    "/ping": {
         "GET": {
             "headers": [
                 { "key": "Content-Type", "value": "text/plain" }
@@ -268,7 +268,7 @@ $ curl -v -X POST http://localhost:1234/users
 To run directly from the source code:
 ```bash
 $ cd src/
-$ go run main.go 
+$ go run main.go
 
 Loading config file:  config_api_mockup.json
 2bitprogrammers/api_mockup v2018.31a
@@ -285,18 +285,18 @@ Copyright (C) 2020. All Rights Reserved.
 CTRL+C
 ```
 
-## Running Multiple Mock APIs on Different Ports 
-The original app wasn't designed to handle this use case. 
+## Running Multiple Mock APIs on Different Ports
+The original app wasn't designed to handle this use case.
 
 With that in mind, there are a couple different ways to achieve this.
 
 1. Modify the "appPort" variable in main.go before you run the app.  For many reasons, this isn't an ideal work around.  But if you wish to do it anyways, look for the constant "appPort" in main.go.
    * change the default bind port ("1234") to the port you wish the app to listen on localhost
-1. A better approach would be to run multiple docker containers and bind the container ports to your localhost (on different ports). 
+1. A better approach would be to run multiple docker containers and bind the container ports to your localhost (on different ports).
    * *See Below (in docker section):*  **Example: Running Multiple Containers (listening on different ports)**
 
 
-## Run within Docker 
+## Run within Docker
 This will run the components on your local system without using minikube or kubernetes.
 
 
@@ -431,7 +431,7 @@ $ cd examples/
 ## Show the contents for app1 config
 $ cat config_api_mu_mc_1.json
 {
-    "/app": { 
+    "/app": {
         "GET": {
             "headers": [
                 { "key": "Content-Type", "value": "text/plain" }
@@ -445,7 +445,7 @@ $ cat config_api_mu_mc_1.json
 ## Show the contents for app2 config
 $ cat config_api_mu_mc_2.json
 {
-    "/app": { 
+    "/app": {
         "GET": {
             "headers": [
                 { "key": "Content-Type", "value": "text/plain" }
@@ -521,8 +521,8 @@ app_2 makes all others drool :)
 
 
 ## When done, stop the containers
-$ docker stop api_mu_1 
-$ docker stop api_mu_1 
+$ docker stop api_mu_1
+$ docker stop api_mu_2 
 
 ## Verify that the containers are no longer running
 $ docker ps
