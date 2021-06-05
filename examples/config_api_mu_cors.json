@@ -1,0 +1,22 @@
+{
+    "/data": { 
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "application/json" },
+                { "key": "Access-Control-Allow-Origin", "value": "*" },
+                { "key": "Access-Control-Allow-Headers", "value": "*" }             
+            ],
+            "payload": "{ \"status\": 200, \"statusText\": \"Ok\", \"data\": [ [\"r1\", 1.0, 53], [\"r2\", 1.4, 22], [\"r3\", 3.2, 81] ] }"
+        }
+    },
+    "/status": {
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "application/json" },
+                { "key": "Access-Control-Allow-Origin", "value": "*" },
+                { "key": "Access-Control-Allow-Headers", "value": "*" }            
+            ],
+            "payload": "{ \"healthy\": true }"
+        }
+    }
+}

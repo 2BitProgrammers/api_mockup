@@ -55,6 +55,28 @@ $ curl -v http://localhost:1234/uri/does/not/exist
 If the user defines an endpoint response, but it has no declared headers, then it will use the following definition:
 * "Content-Type" = "plain/text"
 
+
+### CORS
+If you are mocking an API which requires CORS enabled, you must add the the appropriate headers.
+* Access-Control-Allow-Origin: *
+* Access-Control-Allow-Headers: *
+
+Example config file which allows CORS from any origin:
+```json
+{
+    "/data": { 
+        "GET": {
+            "headers": [
+                { "key": "Content-Type", "value": "application/json" },
+                { "key": "Access-Control-Allow-Origin", "value": "*" },
+                { "key": "Access-Control-Allow-Headers", "value": "*" }               
+            ],
+            "payload": "{ \"status\": 200, \"statusText\": \"Ok\", \"data\": [ [\"r1\", 1.0, 53], [\"r2\", 1.4, 22], [\"r3\", 3.2, 81] ] }"
+        }
+    }
+}
+```
+
 ### Configuration Examples
 Here we will show some simple examples. It is not an exhaustive list, but it should enough to get you going.
 
